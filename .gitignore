@@ -47,3 +47,43 @@ next-env.d.ts
 /anchor/target/sbf-solana-solana
 /anchor/target/test-ledger
 /anchor/target/.rustc_info.json
+
+# Backend specific
+backend/__pycache__/
+backend/.env
+backend/static/images/*
+!backend/static/images/.gitkeep
+backend/.venv/
+backend/venv/
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Solana/Anchor specific (additional)
+anchor/keypairs/*.json
+anchor/target/bpf-solana-solana/
+anchor/test-ledger/
+anchor/.anchor/
+
+# IDE and OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+Thumbs.db
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+.tmp/

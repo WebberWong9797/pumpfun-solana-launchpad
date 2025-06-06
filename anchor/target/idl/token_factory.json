@@ -1,0 +1,770 @@
+{
+  "address": "CcAY4KNFQ2DmGFwzFUNLeLfZPsyWgJpdoS7C9c86KiCZ",
+  "metadata": {
+    "name": "token_factory",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "create_token",
+      "docs": [
+        "Creates a new token with 1B supply, admin ownership, and bonding curve integration"
+      ],
+      "discriminator": [
+        84,
+        52,
+        204,
+        228,
+        24,
+        140,
+        234,
+        75
+      ],
+      "accounts": [
+        {
+          "name": "mint",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "admin_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "admin"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "burning_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "burning_wallet"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "creator_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "creator"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_data",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "admin",
+          "writable": true
+        },
+        {
+          "name": "burning_wallet"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "symbol",
+          "type": "string"
+        },
+        {
+          "name": "uri",
+          "type": "string"
+        },
+        {
+          "name": "initial_purchase_amount",
+          "type": {
+            "option": "u64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "graduate_token",
+      "docs": [
+        "Marks a token as graduated to Raydium"
+      ],
+      "discriminator": [
+        235,
+        199,
+        225,
+        44,
+        59,
+        251,
+        230,
+        25
+      ],
+      "accounts": [
+        {
+          "name": "token_data",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_data.mint",
+                "account": "TokenData"
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "raydium_pool_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "graduation_fee",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "update_trading_data",
+      "docs": [
+        "Updates token trading data (called by trading program)"
+      ],
+      "discriminator": [
+        107,
+        194,
+        249,
+        58,
+        2,
+        2,
+        42,
+        84
+      ],
+      "accounts": [
+        {
+          "name": "token_data",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_data.mint",
+                "account": "TokenData"
+              }
+            ]
+          }
+        },
+        {
+          "name": "trading_program",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "current_price",
+          "type": "u64"
+        },
+        {
+          "name": "market_cap",
+          "type": "u64"
+        },
+        {
+          "name": "total_volume",
+          "type": "u64"
+        },
+        {
+          "name": "holder_count",
+          "type": "u32"
+        },
+        {
+          "name": "transactions_count",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "TokenData",
+      "discriminator": [
+        10,
+        136,
+        199,
+        13,
+        59,
+        103,
+        129,
+        70
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "TokenCreated",
+      "discriminator": [
+        236,
+        19,
+        41,
+        255,
+        130,
+        78,
+        147,
+        172
+      ]
+    },
+    {
+      "name": "TokenGraduated",
+      "discriminator": [
+        87,
+        245,
+        21,
+        48,
+        222,
+        42,
+        120,
+        116
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "NameTooLong",
+      "msg": "Token name is too long (max 32 characters)"
+    },
+    {
+      "code": 6001,
+      "name": "SymbolTooLong",
+      "msg": "Token symbol is too long (max 10 characters)"
+    },
+    {
+      "code": 6002,
+      "name": "UriTooLong",
+      "msg": "Token URI is too long (max 200 characters)"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidPurchaseAmount",
+      "msg": "Invalid purchase amount"
+    },
+    {
+      "code": 6004,
+      "name": "NotEligibleForGraduation",
+      "msg": "Token is not eligible for graduation"
+    },
+    {
+      "code": 6005,
+      "name": "AlreadyGraduated",
+      "msg": "Token has already graduated"
+    }
+  ],
+  "types": [
+    {
+      "name": "TokenCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "total_supply",
+            "type": "u64"
+          },
+          {
+            "name": "initial_purchase",
+            "type": {
+              "option": "u64"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "TokenData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          },
+          {
+            "name": "total_supply",
+            "type": "u64"
+          },
+          {
+            "name": "bonding_curve_supply",
+            "type": "u64"
+          },
+          {
+            "name": "burning_reserve",
+            "type": "u64"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "updated_at",
+            "type": "i64"
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          },
+          {
+            "name": "current_price",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "market_cap",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "total_volume",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "holder_count",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "transactions_count",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "graduation_eligible",
+            "type": "bool"
+          },
+          {
+            "name": "graduated",
+            "type": "bool"
+          },
+          {
+            "name": "graduation_date",
+            "type": {
+              "option": "i64"
+            }
+          },
+          {
+            "name": "raydium_pool_id",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "graduation_fee",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "initial_purchase_amount",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "initial_tokens_purchased",
+            "type": {
+              "option": "u64"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "TokenGraduated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "raydium_pool_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "graduation_fee",
+            "type": "u64"
+          },
+          {
+            "name": "market_cap",
+            "type": "u64"
+          }
+        ]
+      }
+    }
+  ]
+}

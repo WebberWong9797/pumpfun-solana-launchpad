@@ -1,0 +1,45 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Pump.fun is a platform on the Solana blockchain that simplifies the process of creating and deploying meme coins, allowing users to launch tokens without needing extensive technical knowledge or coding skills. Below is a step-by-step explanation of how Pump.fun deploys a coin to the Solana blockchain, based on available information and the platform's mechanics:
+
+1. User Setup and Wallet Connection
+Connect a Solana Wallet: To interact with Pump.fun, users must connect a Solana-compatible wallet, such as Phantom or Solflare. The wallet needs to have sufficient SOL (Solana's native token) to cover transaction fees, typically at least 0.03 SOL, though the exact amount may vary.
+Access the Platform: Users visit the Pump.fun website and click the "Connect Wallet" button to link their wallet, enabling interaction with the Solana blockchain.
+2. Token Creation Process
+Enter Token Details: Users navigate to the "Start a New Coin" or "Create Coin" section on Pump.fun. They provide:
+Token Name: A unique name for the meme coin.
+Ticker Symbol: A short, memorable symbol (e.g., "DOGE").
+Description: A brief description of the token's purpose or theme.
+Image: An image to represent the token, enhancing its meme appeal.
+No Coding Required: Pump.fun abstracts the complexity of smart contract development. The platform uses pre-built templates and the Solana blockchain’s infrastructure to handle the technical aspects of token creation.
+3. Token Deployment and Minting
+Minting on Solana: Once the user submits the token details, Pump.fun mints the token on the Solana blockchain. This process involves:
+Creating a Token Mint: A new SPL (Solana Program Library) token is created with a fixed supply, typically 1 billion tokens with 6 decimal places (unlike the standard 9 decimals for most Solana SPL tokens).
+Bonding Curve Account: Pump.fun creates a bonding curve account for the token, which defines the token’s price based on supply and demand. The bonding curve dynamically adjusts the price as more tokens are bought or sold.
+Associated Token Account: An associated token account is created to hold the tokens for the creator and subsequent buyers. This is a standard Solana mechanism for token storage.
+Fee Structure: Since August 2024, token creation on Pump.fun is free (0 SOL). However, the first buyer of a newly launched token pays a one-time fee of approximately 0.2 SOL (about $2–$3) to initiate trading. Additionally, Pump.fun charges a 1% fee on all buy and sell transactions.
+4. Trading on Pump.fun
+Immediate Tradability: After deployment, the token is immediately tradable on Pump.fun’s internal order book, which uses the bonding curve model to manage pricing. The initial market capitalization is typically around $4,000.
+Bonding Curve Mechanism: The price of the token increases as more tokens are purchased, following a predefined curve. This ensures fair pricing based on market demand and prevents manipulation.
+No Initial Liquidity Required: Unlike traditional token launches that require creators to seed liquidity pools, Pump.fun eliminates this need. The creator becomes the first holder by purchasing tokens during the creation process, and subsequent buyers add liquidity through their purchases.
+5. Graduation to Raydium
+Market Cap Threshold: When a token’s market capitalization reaches $69,000 on Solana (or $420,000 on the Blast network, if applicable), it becomes eligible to "graduate" to Raydium, a leading decentralized exchange (DEX) on Solana.
+Liquidity Deposit: Pump.fun deposits approximately $12,000 worth of liquidity into Raydium for Solana-based tokens. The liquidity provider (LP) tokens are burned to prevent withdrawal, ensuring stability.
+Service Fee: A fixed fee of 6 SOL is charged from the token’s liquidity to cover network and Raydium fees when the token graduates. This fee is not paid directly by the creator.
+King of the Hill: To be featured prominently on Pump.fun and increase the chances of graduating to Raydium, a token must reach a market cap of $30,000 and dethrone the current "King of the Hill," gaining visibility on the platform.
+6. Technical Infrastructure
+Solana’s Blockchain: Pump.fun leverages Solana’s high-throughput, low-cost blockchain, capable of processing up to 65,000 transactions per second with minimal fees (fractions of a cent). This enables rapid token creation and trading.
+Program ID: Pump.fun operates using a specific Solana program ID (6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P) to manage token creation and trading. Bots and scripts can interact with this program to monitor new tokens or execute trades.
+WebSocket Integration: Pump.fun uses Solana’s WebSocket-based blockSubscribe method to fetch real-time transaction data, ensuring new tokens are detected and processed quickly.
+Anchor Framework: The platform likely uses Solana’s Anchor Framework to simplify decentralized application (dApp) development, with precalculated instruction discriminators to streamline transactions.
+7. Additional Features and Considerations
+Anti-Rug-Pull Mechanisms: Pump.fun’s fair launch model ensures no presales or insider allocations, reducing the risk of rug pulls. Creators don’t receive free tokens; they must purchase them like other users.
+Trading Bots: Users can employ trading bots (e.g., Smithii Market Maker or Pump Advanced) to automate buying or selling, increasing token visibility or trading volume. These bots can help tokens reach the "King of the Hill" status.
+Risks and Volatility: While Pump.fun simplifies token creation, meme coins are highly speculative, with over 99% failing to gain significant traction. Users should be cautious of scams and pump-and-dump schemes.
+Summary
+Pump.fun deploys a coin to the Solana blockchain by allowing users to input token details through a user-friendly interface, minting an SPL token with a bonding curve for pricing. The process requires no coding, leverages Solana’s fast and low-cost infrastructure, and involves a small fee (0.2 SOL for the first buyer, free for creators since August 2024). Tokens are immediately tradable on Pump.fun and can graduate to Raydium upon reaching a $69,000 market cap, with liquidity added and LP tokens burned. The platform’s use of Solana’s tools, like the Anchor Framework and WebSocket subscriptions, ensures efficiency, while its fair launch model minimizes scam risks.
+
+For further details, you can explore Pump.fun’s official documentation or APIs at https://frontend-api.pump.fun/api/#/default/TradesController_getAllByMint or visit their website at https://pump.fun.[](https://stackoverflow.com/questions/79337452/getting-a-market-cap-of-a-pump-fun-coin-on-solana-chain-with-python)

@@ -1,0 +1,143 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+You are an expert in Python, FastAPI, MongoDB, LangChain, and AI agent development.
+
+Key Principles
+- Write concise, technical responses with accurate Python examples.
+- Use functional, declarative programming; avoid classes except for Pydantic models, LangChain tools, and service layers.
+- Prefer composition and dependency injection over inheritance.
+- Use descriptive variable names with auxiliary verbs (e.g., is_streaming, has_tools, should_vectorize).
+- Use lowercase with underscores for directories and files (e.g., agents/agent_service.py, tools/mcp_tools.py).
+- Favor named exports for routes, services, and utility functions.
+- Use the Receive an Object, Return an Object (RORO) pattern.
+
+Python/FastAPI
+- Use def for pure functions and async def for asynchronous operations (database, LLM calls, vector operations).
+- Use type hints for all function signatures. Prefer Pydantic models over raw dictionaries for input validation.
+- File structure: exported router, sub-routes, services, utilities, models/schemas, tools.
+- Avoid unnecessary curly braces in conditional statements.
+- Use concise, one-line syntax for simple conditional statements (e.g., if not agent_config: raise HTTPException()).
+
+Error Handling and Validation
+- Prioritize error handling for AI/LLM operations:
+  - Handle LLM timeouts, rate limits, and API failures at the beginning of functions.
+  - Use early returns for validation failures (missing agent_id, invalid session_id).
+  - Place the happy path (successful agent execution) last in the function.
+  - Implement retry logic for transient LLM and vector database failures.
+  - Use custom error types for agent-specific errors (AgentNotFoundError, MCPConnectionError).
+  - Log all LLM interactions and tool calls for debugging and monitoring.
+  - Provide user-friendly error messages while hiding internal implementation details.
+
+Dependencies
+- FastAPI
+- Pydantic v2
+- pymongo (with Motor for async operations)
+- LangChain
+- Gemini (for embeddings and LLM calls)
+- langsmith (for monitoring and tracing)
+
+FastAPI-Specific Guidelines
+- Use functional components and Pydantic models for all request/response schemas.
+- Use declarative route definitions with clear return type annotations.
+- Use async def for all routes involving database operations, LLM calls, or vector operations.
+- Use lifespan context managers for database connections and LLM client initialization.
+- Implement middleware for request logging, LangSmith tracing, and error monitoring.
+- Use HTTPException with appropriate status codes (404 for missing agents, 429 for rate limits).
+- Use dependency injection for database connections, LLM clients, and agent services.
+
+AI Agent-Specific Guidelines
+- Separate agent creation logic from route handlers using service layers.
+- Use dependency injection for MCP tool loading and agent configuration.
+- Implement proper session management for conversation context.
+- Use async operations for all vector database operations (embedding generation, similarity search).
+- Implement proper streaming for LLM responses using FastAPI's StreamingResponse.
+- Use Pydantic models for agent configurations, tool definitions, and conversation schemas.
+- Implement proper error handling for tool execution failures.
+
+Performance Optimization
+- Use async operations for all I/O-bound tasks (database, LLM calls, vector operations).
+- Implement caching for:
+  - Agent configurations (Redis)
+  - Frequently accessed conversation history
+  - MCP tool definitions
+  - Vector embeddings when possible
+- Use connection pooling for database and LLM client connections.
+- Implement lazy loading for large conversation histories.
+- Use background tasks for non-critical operations (analytics, logging).
+
+LangChain Integration
+- Use LangChain's async methods for all agent operations.
+- Implement proper tool calling with error handling and timeout management.
+- Use LangSmith for tracing and monitoring agent performance.
+- Structure agent creation as reusable service functions.
+- Implement proper memory management for conversation context.
+
+Vector Operations
+- Use async operations for all embedding generation and similarity searches.
+- Implement proper error handling for vector database connection failures.
+- Use efficient batching for multiple vector operations.
+- Cache embeddings when appropriate to reduce API calls.
+
+Database Operations
+- Use Motor (async PyMongo) for all database operations.
+- Implement proper indexing for conversation queries and vector searches.
+- Use transactions for operations that modify multiple collections.
+- Implement proper connection pooling and error handling.
+
+MCP Integration
+- Implement MCP tools as LangChain BaseTool subclasses.
+- Use async operations for all MCP server communications.
+- Implement proper error handling and fallback strategies for MCP failures.
+- Cache MCP tool definitions to avoid repeated discovery calls.
+
+Security and Monitoring
+- Implement proper input validation for all agent inputs and tool parameters.
+- Use LangSmith for monitoring LLM usage and costs.
+- Implement rate limiting for agent interactions.
+- Log all tool executions and agent decisions for audit purposes.
+- Mask PII in logs and monitoring data.
+
+Key Conventions
+1. Agent services should be injected as dependencies, not instantiated in routes.
+2. All database operations must be async and include proper error handling.
+3. Vector operations should include fallback strategies for search failures.
+4. Tool execution should be isolated and include timeout management.
+5. Conversation context should be properly managed and limited to prevent token overflow.
+6. All LLM interactions should be traced and monitored.
+
+File Structure
+```
+app/
+├── main.py                 # FastAPI app with lifespan management
+├── api/
+│   ├── v1/
+│   │   ├── routes/
+│   │   │   ├── chat.py         # Chat endpoints
+│   │   │   ├── agents.py       # Agent management
+│   │   │   └── mcp_servers.py  # MCP server management
+├── services/
+│   ├── agent_service.py    # Agent creation and management
+│   ├── conversation_service.py # Conversation handling
+│   ├── vector_service.py   # Vector operations
+│   └── mcp_service.py      # MCP integration
+├── tools/
+│   ├── mcp_tools.py        # MCP tool implementations
+│   └── base_tools.py       # Base tool classes
+├── models/
+│   ├── agents.py           # Agent Pydantic models
+│   ├── conversations.py    # Conversation models
+│   └── requests.py         # Request/response models
+├── core/
+│   ├── database.py         # Database connection
+│   ├── config.py           # Configuration
+│   └── dependencies.py     # FastAPI dependencies
+└── utils/
+    ├── embeddings.py       # Embedding utilities
+    ├── formatting.py       # Text formatting
+    └── monitoring.py       # Logging and monitoring
+```
+
+Refer to FastAPI documentation for async operations, LangChain documentation for agent patterns, and MongoDB documentation for vector search operations.

@@ -1,0 +1,604 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+## System Architecture Overview
+
+### Core Components
+1. **Next.js Frontend Application** - User interface and web application
+2. **Python Backend API** - Image storage, database management, and URI generation service
+3. **Anchor Smart Contracts** - Solana program for token creation and trading logic
+4. **Phantom Wallet Integration** - User wallet connection and transaction signing *Already implemented in existing project*
+5. **Admin Dashboard** - Display-only monitoring and analytics (no wallet connection required)
+6. **Real-time Data Processing** - WebSocket integration for live price updates
+
+## Backend API Architecture
+
+### Service Layer Architecture
+**Python Backend Service Structure**:
+- **Application Layer**: FastAPI application server
+- **Database**: MongoDB
+- **Business Logic Layer**: Core image processing and metadata management
+- **Data Access Layer**: Database operations and query management
+- **External API Layer**: Integration with frontend and third-party services
+
+### API Endpoint Design
+**Core Endpoints**:
+```
+POST   /api/v1/images/upload          - Upload image and generate URI
+GET    /api/v1/images/{uri}           - Retrieve image by URI
+POST   /api/v1/tokens/create          - Store token data after blockchain deployment
+GET    /api/v1/tokens                 - Get all tokens with pagination and filtering
+GET    /api/v1/tokens/{mint_address}  - Get specific token details
+PUT    /api/v1/tokens/{mint_address}  - Update token trading data and metrics
+POST   /api/v1/tokens/{mint_address}/graduate - Mark token for Raydium graduation
+GET    /api/v1/tokens/search/{query}  - Search tokens by name, symbol, or contract address
+GET    /api/v1/tokens/{mint_address}/transactions - Get token transaction history
+GET    /api/v1/tokens/{mint_address}/verify - Verify token contract on blockchain
+GET    /api/v1/health                 - Health check endpoint
+```
+
+**Blockchain Integration Endpoints**:
+```
+GET    /api/v1/blockchain/verify/{mint_address}     - Verify contract exists on Solana
+GET    /api/v1/blockchain/transactions/{signature} - Get transaction details
+GET    /api/v1/blockchain/holders/{mint_address}   - Get token holder information
+```
+
+### Database Architecture
+**Primary Tables**:
+- **images**: Store image data and metadata
+- **tokens**: Store all created token information for Raydium deployment tracking
+- **trading_pairs**: Track bonding curve and trading data for each token
+- **graduations**: Log successful Raydium migrations and deployment data
+- **transactions**: Record all trading transactions and activities
+- **audit_logs**: Track all API operations
+
+### Request/Response Flow
+1. **Image Upload Request** → Validation → Storage → URI Generation → Response
+2. **Image Retrieval Request** → URI Validation → Database Query → Image Serving
+
+### Security Implementation
+- **Rate Limiting**: Prevent abuse and DoS attacks
+- **Input Validation**: Sanitize all incoming data
+- **File Type Validation**: Restrict to supported image formats
+- **Size Limitations**: Enforce maximum file size limits
+- **CORS Configuration**: Control cross-origin requests
+- **API Key Authentication**: Secure endpoint access
+
+### Performance Optimization
+- **Image Compression**: Automatic optimization for web delivery
+- **Caching Strategy**: Redis for frequently accessed data
+- **Database Indexing**: Optimized queries for fast retrieval
+- **Connection Pooling**: Efficient database connection management
+- **Load Balancing**: Horizontal scaling capabilities
+
+## Detailed Page Design & Functionality
+
+### 1. Marketplace Page (Main Trading Hub)
+**Purpose**: Central hub for discovering and trading all available tokens
+
+**Design Elements**:
+- **Header**: *Already implemented in existing project* - Navigation bar with wallet connection, search bar, and user profile
+- **Featured Section**: "King of the Hill" token (highest market cap under graduation threshold)
+- **Token Grid**: Card-based layout displaying:
+  - Token logo and name
+  - **Contract address (abbreviated) with copy button**
+  - Current price and 24h change
+  - Market cap progression bar
+  - Recent activity indicators
+  - Quick buy/sell buttons
+  - **"View on Explorer" link for each token**
+- **Filters & Sorting**: By market cap, age, volume, trending
+- **Real-time Updates**: Live price feeds and new token alerts
+- **Quick Verification**: Hover tooltip showing full contract address and explorer links
+
+**Key Functions**:
+- Token discovery and browsing
+- Quick trading actions
+- **Instant contract address verification from marketplace**
+- Market data visualization
+- Search and filtering capabilities (including search by contract address)
+
+**Implementation Notes**:
+- Leverage existing header component and navigation structure
+- Focus development on token grid, filtering, and real-time data integration
+- Integrate with existing wallet connection flow
+- **Add contract address indexing for fast search capabilities**
+
+### 2. Create Coin Page
+**Purpose**: User-friendly token creation interface with proper token account management
+
+**Design Elements**:
+- **Step-by-step Wizard**:
+  - Step 1: Upload image to backend and get the image uri
+  - Step 2: Token metadata (name, symbol, description, image uri)
+  - Step 3: Review and confirmation
+  - Step 4: Ask user to buy coins (optional but recommended to prevent sniper attacks)
+    - Input field for SOL amount to spend on initial token purchase
+    - Clear messaging: "Buying tokens helps protect your coin from snipers (optional)"
+    - Minimum suggested amount: 0.1 SOL
+    - Option to skip this step
+  - Step 5: Transaction signing and deployment
+- **Preview Panel**: Real-time preview of token appearance
+- **Success Page**: Token deployment confirmation with trading link
+
+**Token Creation Logic**:
+1. **Token Mint Creation**:
+   - Create new token mint with 1,000,000,000 (1B) total supply
+   - Set decimals to 9 for proper fractional trading
+   - Admin wallet becomes the mint authority
+   - Admin wallet becomes the freeze authority
+
+2. **Token Account Setup**:
+   - Create associated token account for admin wallet
+   - Mint 1,000,000,000 tokens to admin's associated token account
+   - Admin becomes the owner of all initial tokens
+
+3. **Admin Token Allocation**:
+   - Transfer 200,000,000 tokens (20%) to dedicated admin burning wallet
+   - These tokens are reserved for future burning to reduce supply
+   - Remaining 800,000,000 tokens stay in admin wallet for bonding curve
+
+4. **Bonding Curve Integration**:
+   - Initialize bonding curve with 800,000,000 available tokens
+   - Set initial price based on curve formula
+   - Configure trading parameters and fees
+
+5. **Database Storage**:
+   - Store complete token data in database for Raydium deployment tracking
+   - Record mint address, creator wallet, metadata, and initial parameters
+   - Initialize trading pair data with bonding curve configuration
+   - Set graduation status to "pending" with $69K market cap threshold
+
+6. **Optional Initial Purchase**:
+   - If user chooses to buy tokens, execute purchase immediately after creation
+   - Purchase amount deducted from user's SOL balance
+   - Tokens transferred from bonding curve to user's associated token account
+   - Update database with initial trading activity
+   - This helps establish initial liquidity and price discovery
+
+**Key Functions**:
+- Token metadata collection and validation
+- Image upload and optimization
+- SPL token minting with proper token account creation
+- Admin ownership establishment
+- 20% token allocation for burning
+- Bonding curve account creation with 80% supply
+- Optional initial token purchase
+- Free token creation (no creation fees)
+
+**Technical Implementation**:
+- Use Token Program or Token Extensions Program
+- Create associated token accounts for admin and users
+- Implement proper mint authority and freeze authority controls
+- Set up secure token transfer mechanisms
+- Integrate with existing bonding curve logic
+
+### 3. Chart Page (Individual Token Trading)
+**Purpose**: Detailed trading interface for specific tokens
+
+**Design Elements**:
+- **Price Chart**: TradingView-style candlestick/line chart
+- **Token Information Panel**:
+  - Token metadata and description
+  - Creator information
+  - **Contract Address Section**:
+    - Token mint address (contract address) with copy button
+    - Direct links to Solana Explorer and Solscan
+    - Clear labeling: "Contract Address" or "Token Mint Address"
+    - QR code for easy mobile access 
+  - Current stats (price, market cap, holders)
+  - Progress to Raydium graduation ($69K threshold)
+- **Trading Panel**:
+  - Buy/Sell toggle
+  - Amount input with SOL/Token conversion
+  - Slippage settings
+  - Transaction preview
+- **Activity Feed**: Recent transactions and holder updates
+- **Comment Section**: Community discussion (optional)
+- **Blockchain Verification Section**:
+  - "Verify on Blockchain" button linking to Solana Explorer
+  - Recent transaction signatures with explorer links
+  - Token account information and verification links
+
+**Key Functions**:
+- Real-time price charting
+- Advanced trading interface
+- **Contract address display and blockchain verification**
+- **Easy access to transaction history on explorers**
+- Transaction history
+- Social features
+- Market depth visualization
+
+**Contract Address Integration**:
+- **Prominent Display**: Contract address shown at top of token information panel
+- **Copy Functionality**: One-click copy to clipboard with confirmation
+- **Explorer Integration**: 
+  - Direct link to `https://explorer.solana.com/address/{mint_address}`
+  - Direct link to `https://solscan.io/token/{mint_address}`
+  - Custom link builder for other popular Solana explorers
+- **Transaction Verification**: 
+  - Show recent transaction signatures with explorer links
+  - Link each trade to its blockchain transaction
+  - Display confirmation status and block information
+- **Mobile Optimization**: QR code generation for easy mobile scanning and verification
+
+### 4. Admin Dashboard (Display-Only Interface)
+**Purpose**: Administrative oversight and monitoring (no wallet connection required)
+
+**Design Elements**:
+- **Admin Wallet Overview**: 
+  - Display-only admin wallet balance (similar to AccountBalance component)
+  - Admin wallet address with explorer link (similar to AccountDetailFeature)
+  - No wallet connection buttons or controls
+  - Read-only interface identical to account detail page
+- **Admin Wallet Activity**:
+  - AccountTokens view for admin wallet (display-only)
+  - AccountTransactions view for admin wallet (display-only)
+  - Historical transaction data and token holdings
+- **Platform Analytics**:
+  - Trading volume statistics
+  - Platform usage metrics
+  - Token creation statistics
+- **Token Management**:
+  - All tokens overview
+  - Graduation tracking
+  - Suspicious activity monitoring
+- **Financial Overview**:
+  - Graduation fee collection history
+  - Revenue projections from premium features
+
+**Key Functions**:
+- **Display-only admin wallet monitoring** (no buttons or interactive elements)
+- **Read-only account information** (matching AccountDetailFeature functionality)
+- Platform analytics and system health monitoring
+- Token graduation tracking and reporting
+- **No manual withdrawal capabilities**
+- **No wallet connection required**
+
+**Technical Implementation**:
+- Reuse existing AccountBalance, AccountTokens, and AccountTransactions components
+- Remove AccountButtons component from admin interface
+- Implement hardcoded admin wallet address (no dynamic connection)
+- Display admin wallet data using same structure as account detail page
+
+## Technical Implementation Strategy
+
+### Smart Contract Architecture (Anchor)
+
+**Core Programs**:
+1. **Token Factory Program**:
+   - Creates new SPL tokens with standardized parameters using Token Program
+   - Implements proper token account management and associated token accounts
+   - Handles admin ownership and token allocation (80% bonding curve, 20% burning)
+   - Implements bonding curve mechanism with 800M available tokens
+   - Manages token graduation logic
+   - Supports optional initial token purchases for sniper protection
+   - Free token creation (no fees required)
+
+2. **Trading Program**:
+   - Executes buy/sell orders through bonding curve using token accounts
+   - Creates associated token accounts for users automatically
+   - Calculates dynamic pricing based on available 800M token supply
+   - Manages liquidity and token transfers between accounts
+   - Integrates with Token Program for secure token operations
+   - Zero trading fees for all transactions
+
+**Token Account Management**:
+1. **Mint Creation Process**:
+   ```
+   - Create mint account with 1B total supply and 9 decimals
+   - Set admin wallet as mint authority and freeze authority
+   - Generate associated token account for admin wallet
+   - Mint all 1B tokens to admin's associated token account
+   ```
+
+2. **Token Distribution Process**:
+   ```
+   - Transfer 200M tokens (20%) to admin burning wallet account
+   - Keep 800M tokens in admin account for bonding curve operations
+   - Initialize bonding curve program with 800M available supply
+   ```
+
+3. **User Token Account Creation**:
+   ```
+   - Automatically create associated token accounts for users during first purchase
+   - Use deterministic PDA derivation for token account addresses
+   - Ensure proper ownership and authority configuration
+   ```
+
+4. **Trading Operations**:
+   ```
+   - Execute token transfers between associated token accounts
+   - Maintain bonding curve math with 800M circulating supply
+   - Handle SOL ⟷ Token swaps through program accounts
+   - Update user token balances in their associated token accounts
+   - Update database with real-time trading data for graduation tracking
+   ```
+
+### Database Schema & Token Storage
+
+**Tokens Collection**:
+```javascript
+{
+  _id: ObjectId,
+  mint_address: String,           // Primary identifier for Solana token mint
+  creator_wallet: String,         // Wallet address of token creator
+  name: String,                   // Token name
+  symbol: String,                 // Token symbol (e.g., "DOGE")
+  description: String,            // Token description
+  image_uri: String,              // IPFS or backend URI for token image
+  
+  // Token Configuration
+  total_supply: Number,           // 1,000,000,000 (1B)
+  decimals: Number,               // 9
+  bonding_curve_supply: Number,   // 800,000,000 (available for trading)
+  burning_reserve: Number,        // 200,000,000 (admin burning allocation)
+  
+  // Trading Data for Graduation Tracking
+  current_price: Number,          // Current token price in SOL
+  market_cap: Number,             // Current market cap in USD
+  total_volume: Number,           // Total trading volume since creation
+  holder_count: Number,           // Number of unique token holders
+  transactions_count: Number,     // Total number of transactions
+  
+  // Graduation Status
+  graduation_status: String,      // "pending", "eligible", "graduated", "failed"
+  graduation_threshold: Number,   // $69,000 market cap threshold
+  graduation_date: Date,          // When token graduated to Raydium (if applicable)
+  raydium_pool_id: String,        // Raydium pool ID after graduation
+  
+  // Metadata
+  created_at: Date,
+  updated_at: Date,
+  is_active: Boolean,
+  tags: [String]                  // ["meme", "community", etc.]
+}
+```
+
+**Trading Pairs Collection**:
+```javascript
+{
+  _id: ObjectId,
+  mint_address: String,           // Reference to token
+  pair_type: String,              // "bonding_curve" or "raydium_pool"
+  
+  // Bonding Curve Data
+  base_price: Number,             // Initial price
+  current_sold: Number,           // Tokens sold from bonding curve
+  available_supply: Number,       // Remaining tokens in curve
+  price_formula: String,          // Mathematical formula used
+  
+  // Pool Data (after graduation)
+  pool_id: String,                // Raydium pool identifier
+  liquidity_sol: Number,          // SOL in liquidity pool
+  liquidity_token: Number,        // Tokens in liquidity pool
+  
+  created_at: Date,
+  updated_at: Date
+}
+```
+
+**Graduations Collection**:
+```javascript
+{
+  _id: ObjectId,
+  mint_address: String,           // Token that graduated
+  graduation_date: Date,
+  market_cap_at_graduation: Number,
+  total_volume_at_graduation: Number,
+  raydium_pool_data: {
+    pool_id: String,
+    initial_sol_liquidity: Number,
+    initial_token_liquidity: Number,
+    pool_creation_signature: String
+  },
+  graduation_fee_collected: Number,
+  status: String                  // "successful", "failed", "pending"
+}
+```
+
+**Transactions Collection**:
+```javascript
+{
+  _id: ObjectId,
+  mint_address: String,           // Token involved in transaction
+  transaction_signature: String,  // Solana transaction signature
+  user_wallet: String,            // User's wallet address
+  transaction_type: String,       // "buy", "sell", "create"
+  
+  // Transaction Details
+  sol_amount: Number,             // SOL involved in transaction
+  token_amount: Number,           // Tokens involved in transaction
+  price_per_token: Number,        // Price at time of transaction
+  
+  // Market Impact
+  market_cap_before: Number,
+  market_cap_after: Number,
+  
+  timestamp: Date,
+  block_height: Number
+}
+```
+
+### Bonding Curve Mechanism Design
+
+**Mathematical Model**:
+- **Formula**: `Price = Base_Price × (Total_Supply_Sold / Available_Supply)^2`
+- **Available Supply**: 800,000,000 tokens (80% of 1B total supply)
+- **Reserved Supply**: 200,000,000 tokens (20% allocated to admin for burning)
+- **Initial Price**: $0.000004 (approximately)
+- **Price Progression**: Exponential growth with increased demand
+- **Market Cap Calculation**: `Current_Price × Circulating_Supply`
+
+**Token Supply Allocation**:
+- **Total Minted**: 1,000,000,000 tokens
+- **Bonding Curve Supply**: 800,000,000 tokens (available for trading)
+- **Admin Burning Reserve**: 200,000,000 tokens (held for future supply reduction)
+- **Creator Allocation**: 0 tokens (fair launch, no pre-allocation to creators)
+
+**Key Features**:
+- Fair launch mechanism (no pre-allocation to creators)
+- Automatic price discovery based on 800M tradeable supply
+- Admin-controlled burning mechanism for tokenomics optimization
+- Prevents large holder manipulation through curve design
+- Smooth price transitions with mathematical precision
+- Anti-sniper protection through optional initial purchases
+- Real-time database updates for graduation tracking
+
+### Data Management & Real-time Updates
+
+**WebSocket Integration**:
+- Solana blockchain event subscription
+- Real-time price updates and database synchronization
+- Transaction broadcasting and database logging
+- New token detection and automatic database storage
+- Graduation threshold monitoring and alerts
+
+**Database Operations**:
+- Automatic token data storage after blockchain deployment
+- Real-time trading data updates for market cap calculation
+- Graduation eligibility monitoring ($69K threshold)
+- Historical data preservation for analytics
+- Automated Raydium deployment data recording
+
+### Wallet Integration Strategy
+
+**User Wallet (Phantom)**:
+- Primary transaction signing
+- Token balance management
+- Trading authorization
+- Automatic token account creation
+
+**Admin Wallet (Display-Only)**:
+- **The data of admin wallet should be hardcoded and store in a config file**
+- **No wallet connection required**
+- **Read-only balance and transaction viewing**
+- **No programmatic access or manual withdrawal**
+- **Hardcoded address for monitoring purposes only**
+- **Identical functionality to account detail pages**
+
+## Revenue Model
+
+### Primary Revenue Streams
+1. **Graduation Fees**: Percentage of liquidity upon Raydium migration
+2. **Future Premium Features**: Advanced analytics, priority support
+3. **Partnership Revenue**: Integration fees from third-party services
+
+### Fee Structure
+- **Token Creation**: Free (no fees)
+- **Token Trading**: Free (no fees) 
+- **Raydium Graduation**: Small percentage of migrated liquidity
+- **Premium Services**: Optional paid features for advanced users
+
+### Fee Distribution
+- **Platform Operations**: 60%
+- **Development Fund**: 25%
+- **Marketing & Growth**: 15%
+
+## Security & Risk Management
+
+### Anti-Rug Pull Mechanisms
+- No pre-allocation to creators
+- Transparent bonding curve pricing
+- Immutable token contracts
+- Community-driven validation
+- Comprehensive database tracking for transparency
+
+### Smart Contract Security
+- Comprehensive testing suite
+- External security audits
+- Gradual feature rollout
+- Emergency pause mechanisms
+
+### Database Security
+- Encrypted token data storage
+- Backup and recovery systems
+- Access control and audit logging
+- Real-time data validation and integrity checks
+
+### Admin Security Enhancements
+- **No programmatic access to admin wallet**
+- **Display-only interface prevents unauthorized access**
+- **Hardcoded wallet address eliminates connection vulnerabilities**
+- **Separation of monitoring and control functions**
+
+## User Experience Flow
+
+### Token Creation Journey
+1. Connect Phantom wallet
+2. Complete token creation wizard
+3. Receive token deployment confirmation
+4. **Automatic database storage of token data**
+5. Access immediate trading interface
+6. Optional: Purchase initial tokens for anti-sniper protection
+
+### Trading Experience
+1. Browse marketplace or search specific tokens (from database)
+2. Click token to access detailed chart page
+3. Execute buy/sell orders through intuitive interface
+4. **Real-time database updates for all transactions**
+5. Monitor portfolio and transaction history
+6. Track token progression toward graduation ($69K threshold)
+
+### Graduation Process
+1. **Automatic monitoring of market cap threshold**
+2. **System notification when token reaches $69K market cap**
+3. **Database status update to "eligible" for graduation**
+4. **Automated Raydium pool creation process**
+5. **Database recording of graduation data and pool information**
+
+### Admin Monitoring Experience
+1. Access admin dashboard (no wallet connection required)
+2. View admin wallet balance and transaction history
+3. Monitor platform revenue and token activity
+4. **Track all tokens and graduation status from database**
+5. **Read-only interface with no withdrawal capabilities**
+
+## Growth & Scalability Strategy
+
+### Phase 1: MVP Launch
+- Basic token creation and trading
+- Essential marketplace features
+- **Complete database integration for token tracking**
+- Display-only admin functionality
+
+### Phase 2: Enhanced Features
+- Advanced charting tools
+- Social features and community
+- **Automated graduation system**
+- Mobile application
+- API for developers
+
+### Phase 3: Ecosystem Expansion
+- Cross-chain compatibility
+- Advanced DeFi features
+- Institutional tools
+- Partnership integrations
+
+## Success Metrics & KPIs
+
+### Platform Metrics
+- Daily active users
+- Token creation volume
+- Trading volume
+- Revenue generation
+- User retention rates
+
+### Token Ecosystem Health
+- **Graduation success rate (tracked in database)**
+- **Average token lifespan**
+- Community engagement
+- Market cap distribution
+- **Database query performance and reliability**
+
+### Admin Monitoring Metrics
+- Admin wallet balance tracking
+- Platform revenue trends
+- System security status
+- **Database storage and retrieval efficiency**
+- **Real-time graduation monitoring accuracy**
+
+This comprehensive system will provide users with a seamless, secure, and profitable platform for meme coin creation and trading, with complete database integration for Raydium deployment tracking, while maintaining enhanced security through a display-only admin interface that eliminates manual withdrawal risks and unauthorized access vulnerabilities.
